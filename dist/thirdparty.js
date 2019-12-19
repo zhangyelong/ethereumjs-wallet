@@ -117,9 +117,11 @@ function fromEtherWallet(input, password) {
     }
     return wallet;
 }
+exports.fromEtherWallet = fromEtherWallet;
 function fromEtherCamp(passphrase) {
     return new index_1.default(ethUtil.keccak256(Buffer.from(passphrase)));
 }
+exports.fromEtherCamp = fromEtherCamp;
 function fromKryptoKit(entropy, password) {
     function kryptoKitBrokenScryptSeed(buf) {
         // js-scrypt calls `Buffer.from(String(salt), 'utf8')` on the seed even though it is a buffer
@@ -195,6 +197,7 @@ function fromKryptoKit(entropy, password) {
     }
     return new index_1.default(privateKey);
 }
+exports.fromKryptoKit = fromKryptoKit;
 function fromQuorumWallet(passphrase, userid) {
     if (passphrase.length < 10) {
         throw new Error('Passphrase must be at least 10 characters');
@@ -206,6 +209,7 @@ function fromQuorumWallet(passphrase, userid) {
     var seed = crypto.pbkdf2Sync(merged, merged, 2000, 32, 'sha256');
     return new index_1.default(seed);
 }
+exports.fromQuorumWallet = fromQuorumWallet;
 var Thirdparty = {
     fromEtherWallet: fromEtherWallet,
     fromEtherCamp: fromEtherCamp,

@@ -71,13 +71,42 @@ export default class Wallet {
     private readonly privateKey?;
     private publicKey;
     constructor(privateKey?: Buffer | undefined, publicKey?: Buffer | undefined);
+    /**
+     * Create an instance based on a new random key.
+     *
+     * @param icapDirect setting this to `true` will generate an address suitable for the `ICAP Direct mode`
+     */
     static generate(icapDirect?: boolean): Wallet;
+    /**
+     * Create an instance where the address is valid against the supplied pattern (**this will be very slow**)
+     */
     static generateVanityAddress(pattern: RegExp | string): Wallet;
+    /**
+     * Create an instance based on a public key (certain methods will not be available)
+     *
+     * This method only accepts uncompressed Ethereum-style public keys, unless
+     * the `nonStrict` flag is set to true.
+     */
     static fromPublicKey(publicKey: Buffer, nonStrict?: boolean): Wallet;
+    /**
+     * Create an instance based on a BIP32 extended public key (xpub)
+     */
     static fromExtendedPublicKey(extendedPublicKey: string): Wallet;
+    /**
+     * Create an instance based on a raw private key
+     */
     static fromPrivateKey(privateKey: Buffer): Wallet;
+    /**
+     * Create an instance based on a BIP32 extended private key (xprv)
+     */
     static fromExtendedPrivateKey(extendedPrivateKey: string): Wallet;
+    /**
+     * Import a wallet (Version 1 of the Ethereum wallet format)
+     */
     static fromV1(input: string | V1Keystore, password: string): Wallet;
+    /**
+     * Import a wallet (Version 3 of the Ethereum wallet format). Set `nonStrict` true to accept files with mixed-caps.
+     */
     static fromV3(input: string | V3Keystore, password: string, nonStrict?: boolean): Wallet;
     static fromEthSale(input: string | EthSaleKeystore, password: string): Wallet;
     private get pubKey();

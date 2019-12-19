@@ -117,6 +117,11 @@ var Wallet = /** @class */ (function () {
         }
     }
     // static methods
+    /**
+     * Create an instance based on a new random key.
+     *
+     * @param icapDirect setting this to `true` will generate an address suitable for the `ICAP Direct mode`
+     */
     Wallet.generate = function (icapDirect) {
         if (icapDirect === void 0) { icapDirect = false; }
         if (icapDirect) {
@@ -132,6 +137,9 @@ var Wallet = /** @class */ (function () {
             return new Wallet(randomBytes(32));
         }
     };
+    /**
+     * Create an instance where the address is valid against the supplied pattern (**this will be very slow**)
+     */
     Wallet.generateVanityAddress = function (pattern) {
         if (!(pattern instanceof RegExp)) {
             pattern = new RegExp(pattern);
@@ -144,6 +152,12 @@ var Wallet = /** @class */ (function () {
             }
         }
     };
+    /**
+     * Create an instance based on a public key (certain methods will not be available)
+     *
+     * This method only accepts uncompressed Ethereum-style public keys, unless
+     * the `nonStrict` flag is set to true.
+     */
     Wallet.fromPublicKey = function (publicKey, nonStrict) {
         if (nonStrict === void 0) { nonStrict = false; }
         if (nonStrict) {
@@ -151,6 +165,9 @@ var Wallet = /** @class */ (function () {
         }
         return new Wallet(undefined, publicKey);
     };
+    /**
+     * Create an instance based on a BIP32 extended public key (xpub)
+     */
     Wallet.fromExtendedPublicKey = function (extendedPublicKey) {
         if (extendedPublicKey.slice(0, 4) !== 'xpub') {
             throw new Error('Not an extended public key');
@@ -159,9 +176,15 @@ var Wallet = /** @class */ (function () {
         // Convert to an Ethereum public key
         return Wallet.fromPublicKey(publicKey, true);
     };
+    /**
+     * Create an instance based on a raw private key
+     */
     Wallet.fromPrivateKey = function (privateKey) {
         return new Wallet(privateKey);
     };
+    /**
+     * Create an instance based on a BIP32 extended private key (xprv)
+     */
     Wallet.fromExtendedPrivateKey = function (extendedPrivateKey) {
         if (extendedPrivateKey.slice(0, 4) !== 'xprv') {
             throw new Error('Not an extended private key');
@@ -172,6 +195,9 @@ var Wallet = /** @class */ (function () {
         }
         return Wallet.fromPrivateKey(tmp.slice(46));
     };
+    /**
+     * Import a wallet (Version 1 of the Ethereum wallet format)
+     */
     Wallet.fromV1 = function (input, password) {
         var json = typeof input === 'object' ? input : JSON.parse(input);
         if (json.Version !== '1') {
@@ -191,6 +217,9 @@ var Wallet = /** @class */ (function () {
         var seed = runCipherBuffer(decipher, ciphertext);
         return new Wallet(seed);
     };
+    /**
+     * Import a wallet (Version 3 of the Ethereum wallet format). Set `nonStrict` true to accept files with mixed-caps.
+     */
     Wallet.fromV3 = function (input, password, nonStrict) {
         if (nonStrict === void 0) { nonStrict = false; }
         var json = typeof input === 'object' ? input : JSON.parse(nonStrict ? input.toLowerCase() : input);
@@ -223,6 +252,7 @@ var Wallet = /** @class */ (function () {
         return new Wallet(seed);
     };
     /*
+     * Import an Ethereum Pre Sale wallet
      * Based on https://github.com/ethereum/pyethsaletool/blob/master/pyethsaletool.py
      * JSON fields: encseed, ethaddr, btcaddr, email
      */
